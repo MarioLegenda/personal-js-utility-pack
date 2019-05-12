@@ -48,3 +48,59 @@ it('should parse the url into domain parts', () => {
     expect(parsed.subdomains).to.be.a('array');
     expect(parsed.subdomains.length).to.be.above(0);
 });
+
+it('should execute all tasks in async sequence in order', (done) => {
+    const tasks = [];
+    const tasksFinished = [];
+
+    for (let i = 0; i < 10; i++) {
+        // setting tasksFinished to false to test that every task callback has been called
+        tasksFinished.push(false);
+
+        function timeout(callback) {
+            setTimeout(() => {
+                callback(i);
+            }, 0);
+        }
+
+        tasks.push(timeout);
+    }
+
+    // counting the number of times callbacks are called 
+    let index = 0;
+    let values = [];
+
+    const onTaskDone = (err, val) => {
+        // we know that the tasks are executed in sequence if the current index is the same as the value
+        // since tasks are assigned a value from 0 to 10.
+        // we also know that this code is called when checking that all tasks are finished in the 
+        // onFinished function
+        expect(val).to.be.equal(index);
+
+        tasksFinished[index] = true;
+        values.push(val);
+
+        ++index;
+    }
+
+    const onFinished = (err) => {
+        for (const finishedTask of tasksFinished) {
+            expect(finishedTask).to.be.true;
+        }
+
+        done();
+    };
+
+    const isChainable = toolbox.async.inSequence(tasks, onTaskDone, onFinished);
+
+    expect(isChainable).to.be.equal(toolbox.async);
+});
+
+it('inSequence() should fail syncronously if given invalid input', () => {
+    const onTaskDone = () => {};
+    const onTaskFinished = () => {};
+
+    expect(() => toolbox.async.inSequence('not an array', onTaskDone, onTaskFinished)).to.throw(TypeError);
+    expect(() => toolbox.async.inSequence([], 'not a function', onTaskFinished)).to.throw(TypeError);
+    expect(() => toolbox.async.inSequence([], onTaskDone, 'not an array')).to.throw(TypeError);
+});
