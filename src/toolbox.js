@@ -1,4 +1,4 @@
-const url = require('./url');
+const url = require('./url/url');
 const misc = require('./misc');
 const async = require('./async');
 
