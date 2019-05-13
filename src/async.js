@@ -1,11 +1,9 @@
-const inSequence = require('./async/inSequence');
-const iterate = require("./async/iterate");
-const limitedSequentailQueue = require('./async/limitedSequentailQueue');
+const sequenceQueue = require('./async/sequenceQueue');
+const limitedSequenceQueue = require('./async/limitedSequenceQueue');
 
 function Async() {
-    this.inSequence = inSequence.bind(this);
-    this.iterate = iterate.bind(this);
-    this.limitedSequentailQueue = limitedSequentailQueue;
+    this.sequenceQueue = sequenceQueue.bind(this);
+    this.limitedSequenceQueue = limitedSequenceQueue;
 }
 
 module.exports = new Async();
