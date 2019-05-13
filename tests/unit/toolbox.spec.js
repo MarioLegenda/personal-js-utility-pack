@@ -2,6 +2,7 @@ const mocha = require('mocha');
 const chai = require('chai');
 const toolbox = require('../../src/toolbox');
 const urlService = require('url');
+const requestPromise = require('request-promise-native');
 
 const it = mocha.it;
 const describe = mocha.describe;
@@ -101,58 +102,109 @@ it('should parse the url into domain parts', () => {
     expect(parsed.subdomains.length).to.be.above(0);
 });
 
-it('should execute all tasks in async sequence in order', (done) => {
-    const tasks = [];
-    const tasksFinished = [];
+describe('test all async function and async helpers | ', () => {
+    it('should execute all tasks in async sequence in order', (done) => {
+        const tasks = [];
+        const tasksFinished = [];
 
-    for (let i = 0; i < 10; i++) {
-        // setting tasksFinished to false to test that every task callback has been called
-        tasksFinished.push(false);
+        for (let i = 0; i < 10; i++) {
+            // setting tasksFinished to false to test that every task callback has been called
+            tasksFinished.push(false);
 
-        function timeout(callback) {
-            setTimeout(() => {
-                callback(i);
-            }, 0);
+            function timeout(callback) {
+                setTimeout(() => {
+                    callback(i);
+                }, 0);
+            }
+
+            tasks.push(timeout);
         }
 
-        tasks.push(timeout);
-    }
+        // counting the number of times callbacks are called 
+        let index = 0;
+        let values = [];
 
-    // counting the number of times callbacks are called 
-    let index = 0;
-    let values = [];
+        const onTaskDone = (err, val) => {
+            // we know that the tasks are executed in sequence if the current index is the same as the value
+            // since tasks are assigned a value from 0 to 10.
+            // we also know that this code is called when checking that all tasks are finished in the 
+            // onFinished function
+            expect(val).to.be.equal(index);
 
-    const onTaskDone = (err, val) => {
-        // we know that the tasks are executed in sequence if the current index is the same as the value
-        // since tasks are assigned a value from 0 to 10.
-        // we also know that this code is called when checking that all tasks are finished in the 
-        // onFinished function
-        expect(val).to.be.equal(index);
+            tasksFinished[index] = true;
+            values.push(val);
 
-        tasksFinished[index] = true;
-        values.push(val);
-
-        ++index;
-    }
-
-    const onFinished = (err) => {
-        for (const finishedTask of tasksFinished) {
-            expect(finishedTask).to.be.true;
+            ++index;
         }
 
-        done();
-    };
+        const onFinished = (err) => {
+            for (const finishedTask of tasksFinished) {
+                expect(finishedTask).to.be.true;
+            }
 
-    const isChainable = toolbox.async.inSequence(tasks, onTaskDone, onFinished);
+            done();
+        };
 
-    expect(isChainable).to.be.equal(toolbox.async);
-});
+        const isChainable = toolbox.async.inSequence(tasks, onTaskDone, onFinished);
 
-it('inSequence() should fail syncronously if given invalid input', () => {
-    const onTaskDone = () => {};
-    const onTaskFinished = () => {};
+        expect(isChainable).to.be.equal(toolbox.async);
+    });
 
-    expect(() => toolbox.async.inSequence('not an array', onTaskDone, onTaskFinished)).to.throw(TypeError);
-    expect(() => toolbox.async.inSequence([], 'not a function', onTaskFinished)).to.throw(TypeError);
-    expect(() => toolbox.async.inSequence([], onTaskDone, 'not an array')).to.throw(TypeError);
+    it('inSequence() should fail syncronously if given invalid input', () => {
+        const onTaskDone = () => {};
+        const onTaskFinished = () => {};
+
+        expect(() => toolbox.async.inSequence('not an array', onTaskDone, onTaskFinished)).to.throw(TypeError);
+        expect(() => toolbox.async.inSequence([], 'not a function', onTaskFinished)).to.throw(TypeError);
+        expect(() => toolbox.async.inSequence([], onTaskDone, 'not an array')).to.throw(TypeError);
+    });
+
+    it('limitedSequentailQueue() should execute all tasks with a limit of tasks to execute at once in a sequence', (done) => {
+        const tasks = [];
+        const tasksFinished = [];
+        for (let i = 0; i < 10; i++) {
+          // setting tasksFinished to false to test that every task callback has been called
+            tasksFinished.push(false);
+
+            function httpGetRequest() {
+                return requestPromise('https://www.google.com');
+            }
+          
+            tasks.push(httpGetRequest);
+        }
+
+        let index = 0;
+        function onTaskDone() {
+            tasksFinished[index] = true;
+
+            ++index;
+        }
+
+        function onQueueDepleted(metadata) {
+            expect(metadata.completed).to.be.below(tasks.length);
+        }
+
+        function onQueueFinished() {
+            for (const isFinished of tasksFinished) {
+                expect(isFinished).to.be.true;
+            }
+
+            done();
+        }
+
+        toolbox.async.limitedSequentailQueue({
+            limit: 5,
+            tasks: tasks,
+            onTaskDone: onTaskDone,
+            onQueueDepleted: onQueueDepleted,
+            onQueueFinished: onQueueFinished,
+            onError: (err) => {console.log(err)},
+        });
+
+        // if does not throw an error, it is successfull.
+        toolbox.async.limitedSequentailQueue({
+            limit: 5,
+            tasks: tasks,
+        });
+    });
 });
