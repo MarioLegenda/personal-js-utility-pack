@@ -26,11 +26,9 @@ describe('testing all misc functions # ', () => {
         expect(toolbox.misc.is('boolean', boolTrue)).to.be.true;
         expect(toolbox.misc.is('boolean', boolFalse)).to.be.true;
         expect(toolbox.misc.is('string', string)).to.be.true;
-        expect(toolbox.misc.is('integer', number)).to.be.true;
         expect(toolbox.misc.is('float', float)).to.be.true;
         expect(toolbox.misc.is('string', stringObj)).to.be.true;
         expect(toolbox.misc.is('boolean', boolObject)).to.be.true;
-        expect(toolbox.misc.is('array', array)).to.be.true;
         expect(toolbox.misc.is('object', obj)).to.be.true;
         expect(toolbox.misc.is('object', objectInst)).to.be.true;
         expect(toolbox.misc.is('function', func)).to.be.true;
