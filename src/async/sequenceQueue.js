@@ -3,7 +3,7 @@ const loopGenerator = require('../misc/loopGenerator');
 
 function validate(tasks, onTaskDone, onComplete, onError) {
 
-  if (!is("array", tasks)) throw new TypeError(`sequence() invalid argument: tasks argument must be an array of functions`);
+  if (!Array.isArray(tasks)) throw new TypeError(`sequence() invalid argument: tasks argument must be an array of functions`);
 
   if (onTaskDone) {
     if (!is("function", onTaskDone)) throw new TypeError(`squence() invalid argument: onTaskDone argument must be a function`);

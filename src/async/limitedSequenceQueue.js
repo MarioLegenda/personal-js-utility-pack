@@ -27,7 +27,7 @@ function validate(metadata) {
     const {limit, tasks, onTaskDone, onQueueDepleted, onQueueFinished, onError} = metadata;
 
     if (!Number.isInteger(limit)) throw new Error(`limitedSequentialQueue() invalid argument. limit should be an integer`);
-    if (!is('array', tasks)) throw new Error(`limitedSequentialQueue() invalid argument. tasks should be an integer`);
+    if (!Array.isArray(tasks)) throw new Error(`limitedSequentialQueue() invalid argument. tasks should be an integer`);
 
     if (onTaskDone) {
       if (!is('function', onTaskDone)) throw new Error(`limitedSequentialQueue() invalid argument. onTaskDone should be a function`);
