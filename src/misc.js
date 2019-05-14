@@ -10,6 +10,7 @@ function Misc() {
     this.ucFirst = ucFirst;
     this.range = range;
     this.loopGenerator = loopGenerator;
+    
 }
 
 module.exports = new Misc();

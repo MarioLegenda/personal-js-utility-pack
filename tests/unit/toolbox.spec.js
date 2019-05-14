@@ -80,6 +80,21 @@ describe('testing all misc functions # ', () => {
           index += 2;
         }
     });
+
+    it('should assert all generator functions', () => {
+        const tasks = [];
+
+        for (let i = 0; i < 10; i++) {
+            tasks.push(i);
+        }
+
+        let gen = toolbox.misc.loopGenerator(tasks);
+
+        let task, index = 0;
+        while(!(task = gen.next()).done) {
+            expect(task.value).to.be.equal(index++);
+        }
+    })
 })
 
 
@@ -199,6 +214,53 @@ describe('test all async function and async helpers | ', function() {
             onTaskDone: onTaskDone,
             onQueueFinished: onQueueFinished,
             onError: (err) => {console.log(err)},
+        });
+    });
+
+    it('limitedBatchQueue() should execute all async functions with no order with a limit', (done) => {
+        const tasks = [];
+        const tasksFinished = [];
+        for (let i = 0; i < 10; i++) {
+          // setting tasksFinished to false to test that every task callback has been called
+            tasksFinished.push(false);
+
+            function httpGetRequest() {
+                return requestPromise('https://www.google.com');
+            }
+          
+            tasks.push(httpGetRequest);
+        }
+
+        let index = 0;
+        let queueFinished = false;
+        function onTaskDone() {
+            tasksFinished[index] = true;
+
+            ++index;
+        }
+
+        function onQueueDepleted() {
+            expect(queueFinished).to.be.false;
+        }
+
+        function onQueueFinished() {
+            queueFinished = true;
+            expect(tasksFinished.filter((a) => a === true).length).to.be.equal(10);
+
+            for (const isFinished of tasksFinished) {
+                expect(isFinished).to.be.true;
+            }
+
+            done();
+        }
+
+        toolbox.async.limitedBatchQueue({
+            limit: 5,
+            tasks: tasks,
+            onTaskDone: onTaskDone,
+            onQueueDepleted: onQueueDepleted,
+            onQueueFinished: onQueueFinished,
+            onError: (err) => console.log(err.message),
         });
     });
 });
