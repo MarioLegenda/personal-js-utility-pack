@@ -263,4 +263,51 @@ describe('test all async function and async helpers | ', function() {
             onError: (err) => console.log(err.message),
         });
     });
+
+    it('batchQueue() should spawn all tasks and complete them without any order', (done) => {
+        const tasks = [];
+        const tasksFinished = [];
+        for (let i = 0; i < 10; i++) {
+          // setting tasksFinished to false to test that every task callback has been called
+            tasksFinished.push(false);
+
+            function httpGetRequest() {
+                return requestPromise('https://www.google.com');
+            }
+          
+            tasks.push(httpGetRequest);
+        }
+
+        let index = 0;
+        let queueFinished = false;
+        function onTaskDone() {
+            tasksFinished[index] = true;
+
+            ++index;
+        }
+
+        function onQueueDepleted() {
+            expect(tasksFinished.filter((a) => a === true).length).to.be.equal(0);
+            expect(queueFinished).to.be.false;
+        }
+
+        function onQueueFinished() {
+            queueFinished = true;
+            expect(tasksFinished.filter((a) => a === true).length).to.be.equal(10);
+
+            for (const isFinished of tasksFinished) {
+                expect(isFinished).to.be.true;
+            }
+
+            done();
+        }
+
+        toolbox.async.batchQueue({
+            tasks: tasks,
+            onTaskDone: onTaskDone,
+            onQueueDepleted: onQueueDepleted,
+            onQueueFinished: onQueueFinished,
+            onError: (err) => console.log(err.message),
+        });
+    })
 });
