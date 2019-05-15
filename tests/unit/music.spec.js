@@ -1,6 +1,6 @@
 const mocha = require('mocha');
 const chai = require('chai');
-const toolbox = require('../../src/toolbox');
+const music = require('../../src/music');
 const urlService = require('url');
 const requestPromise = require('request-promise-native');
 
@@ -8,35 +8,33 @@ const it = mocha.it;
 const describe = mocha.describe;
 const expect = chai.expect;
 
-describe('testing all misc functions # ', () => {
+describe('testing all ladyGaga functions # ', () => {
     it('is() function should pass all checks', () => {
         const boolTrue = true;
         const boolFalse = false;
         const string = 'string';
-        const number = 1;
         const float = 1.1;
         const stringObj = new String('mile');
         const boolObject = new Boolean(true);
-        const array = [];
         const obj = {};
         const objectInst = new Object();
         const func = new Function();
         const nan = NaN;
 
-        expect(toolbox.misc.is('boolean', boolTrue)).to.be.true;
-        expect(toolbox.misc.is('boolean', boolFalse)).to.be.true;
-        expect(toolbox.misc.is('string', string)).to.be.true;
-        expect(toolbox.misc.is('float', float)).to.be.true;
-        expect(toolbox.misc.is('string', stringObj)).to.be.true;
-        expect(toolbox.misc.is('boolean', boolObject)).to.be.true;
-        expect(toolbox.misc.is('object', obj)).to.be.true;
-        expect(toolbox.misc.is('object', objectInst)).to.be.true;
-        expect(toolbox.misc.is('function', func)).to.be.true;
-        expect(toolbox.misc.is('nan', nan)).to.be.true;
+        expect(music.ladyGaga.is('boolean', boolTrue)).to.be.true;
+        expect(music.ladyGaga.is('boolean', boolFalse)).to.be.true;
+        expect(music.ladyGaga.is('string', string)).to.be.true;
+        expect(music.ladyGaga.is('float', float)).to.be.true;
+        expect(music.ladyGaga.is('string', stringObj)).to.be.true;
+        expect(music.ladyGaga.is('boolean', boolObject)).to.be.true;
+        expect(music.ladyGaga.is('object', obj)).to.be.true;
+        expect(music.ladyGaga.is('object', objectInst)).to.be.true;
+        expect(music.ladyGaga.is('function', func)).to.be.true;
+        expect(music.ladyGaga.is('nan', nan)).to.be.true;
     });
 
     it('should create a range of numbers', () => {
-        let range = toolbox.misc.range(1, 10);
+        let range = music.ladyGaga.range(1, 10);
 
         expect(range.length).to.be.equal(10);
         index = 1;
@@ -44,7 +42,7 @@ describe('testing all misc functions # ', () => {
             expect(item).to.be.equal(index++);
         }
 
-        range = toolbox.misc.range(1, 10, 2);
+        range = music.ladyGaga.range(1, 10, 2);
 
         expect(range.length).to.be.equal(5);
 
@@ -55,7 +53,7 @@ describe('testing all misc functions # ', () => {
           index += 2;
         }
 
-        range = toolbox.misc.range(0, 10, 2);
+        range = music.ladyGaga.range(0, 10, 2);
 
         index = 2;
         for (const item of range) {
@@ -64,14 +62,14 @@ describe('testing all misc functions # ', () => {
             index += 2;
         }
 
-        range = toolbox.misc.range(-5, 10);
+        range = music.ladyGaga.range(-5, 10);
 
         index = -5;
         for (const item of range) {
             expect(item).to.be.equal(index++);
         }
 
-        range = toolbox.misc.range(-5, 10, 2);
+        range = music.ladyGaga.range(-5, 10, 2);
 
         index = -4;
         for (const item of range) {
@@ -88,7 +86,7 @@ describe('testing all misc functions # ', () => {
             tasks.push(i);
         }
 
-        let gen = toolbox.misc.loopGenerator(tasks);
+        let gen = music.ladyGaga.loopGenerator(tasks);
 
         let task, index = 0;
         while(!(task = gen.next()).done) {
@@ -101,7 +99,7 @@ describe('testing all misc functions # ', () => {
 it('should parse the url into domain parts', () => {
     const url = 'https://developer.mozilla.org/en-US/';
 
-    const parsed = toolbox.url.parseHostname(urlService.parse(url).hostname);
+    const parsed = music.ladyGaga.parseHostname(urlService.parse(url).hostname);
     
     expect(parsed).to.have.property('ext');
     expect(parsed).to.have.property('domainName');
@@ -115,10 +113,10 @@ it('should parse the url into domain parts', () => {
     expect(parsed.subdomains.length).to.be.above(0);
 });
 
-describe('test all async function and async helpers | ', function() {
+describe('test all billieHoliday function and billieHoliday helpers | ', function() {
     this.timeout(3000);
 
-    it('should execute all async tasks in order', (done) => {
+    it('sequenceQueue() should execute all billieHoliday tasks in order', (done) => {
         const tasks = [];
         const tasksFinished = [];
 
@@ -160,23 +158,23 @@ describe('test all async function and async helpers | ', function() {
         
         const onError = () => {}
 
-        const isChainable = toolbox.async.sequenceQueue({
+        const isChainable = music.billieHoliday.sequenceQueue({
             tasks: tasks,
             onTaskDone, onTaskDone,
             onComplete: onComplete,
             onError: onError,
         });
 
-        expect(isChainable).to.be.equal(toolbox.async);
+        expect(isChainable).to.be.equal(music.billieHoliday);
     });
 
     it('sequenceQueue() should fail syncronously if given invalid input', () => {
         const onTaskDone = () => {};
         const onTaskFinished = () => {};
 
-        expect(() => toolbox.async.sequenceQueue('not an array', onTaskDone, onTaskFinished)).to.throw(TypeError);
-        expect(() => toolbox.async.sequenceQueue([], 'not a function', onTaskFinished)).to.throw(TypeError);
-        expect(() => toolbox.async.sequenceQueue([], onTaskDone, 'not an array')).to.throw(TypeError);
+        expect(() => music.billieHoliday.sequenceQueue('not an array', onTaskDone, onTaskFinished)).to.throw(TypeError);
+        expect(() => music.billieHoliday.sequenceQueue([], 'not a function', onTaskFinished)).to.throw(TypeError);
+        expect(() => music.billieHoliday.sequenceQueue([], onTaskDone, 'not an array')).to.throw(TypeError);
     });
 
     it('limitedSequenceQueue() should execute all tasks with a limit of tasks to execute at once in a sequence', (done) => {
@@ -208,7 +206,7 @@ describe('test all async function and async helpers | ', function() {
             done();
         }
 
-        toolbox.async.limitedSequenceQueue({
+        music.billieHoliday.limitedSequenceQueue({
             limit: 5,
             tasks: tasks,
             onTaskDone: onTaskDone,
@@ -217,7 +215,7 @@ describe('test all async function and async helpers | ', function() {
         });
     });
 
-    it('limitedBatchQueue() should execute all async functions with no order with a limit', (done) => {
+    it('limitedBatchQueue() should execute all billieHoliday functions with no order with a limit', (done) => {
         const tasks = [];
         const tasksFinished = [];
         for (let i = 0; i < 10; i++) {
@@ -254,7 +252,7 @@ describe('test all async function and async helpers | ', function() {
             done();
         }
 
-        toolbox.async.limitedBatchQueue({
+        music.billieHoliday.limitedBatchQueue({
             limit: 5,
             tasks: tasks,
             onTaskDone: onTaskDone,
@@ -302,7 +300,7 @@ describe('test all async function and async helpers | ', function() {
             done();
         }
 
-        toolbox.async.batchQueue({
+        music.billieHoliday.batchQueue({
             tasks: tasks,
             onTaskDone: onTaskDone,
             onQueueDepleted: onQueueDepleted,
