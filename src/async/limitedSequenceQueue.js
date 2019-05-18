@@ -8,19 +8,26 @@ function realSpawn(metadata) {
       onError = null;
     }
 
-    sequenceQueue({
+    const sequenceOptions = {
       tasks: tasks.slice((completed) ? completed + 1 : completed, limit + completed + 1),
-      onTaskDone: (...rest) => {
-          onTaskDone(...[rest]);
-      },
       onComplete: () => {
         completed += limit;
 
-        if (completed === tasks.length && onQueueFinished) return onQueueFinished();
+        if (onQueueFinished) {
+          if (completed === tasks.length && onQueueFinished) return onQueueFinished();
+        }
 
         return realSpawn({...metadata, ...{completed: completed}});
       },
-    });
+    };
+
+    if (onTaskDone) {
+      sequenceOptions.onTaskDone = (...rest) => {
+        onTaskDone(...[rest]);
+      };
+    }
+
+    sequenceQueue(sequenceOptions);
 }
 
 function validate(metadata) {

@@ -233,6 +233,11 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
         });
 
         expect(isChainable).to.be.equal(music.billieHoliday);
+
+        // if does not throw an error, passes
+        music.billieHoliday.sequenceQueue({
+            tasks: tasks,
+        });
     });
 
     it('sequenceQueue() should fail syncronously if given invalid input', () => {
@@ -279,6 +284,12 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
             onTaskDone: onTaskDone,
             onQueueFinished: onQueueFinished,
             onError: (err) => {console.log(err)},
+        });
+
+        // if it does not throw an error, passes
+        music.billieHoliday.limitedSequenceQueue({
+            limit: 5,
+            tasks: tasks,
         });
     });
 
@@ -327,13 +338,19 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
             onQueueFinished: onQueueFinished,
             onError: (err) => console.log(err.message),
         });
+
+        // if it does not throw an error, passes
+        music.billieHoliday.limitedBatchQueue({
+            limit: 5,
+            tasks: tasks,
+        });
     });
 
     it('batchQueue() should spawn all tasks and complete them without any order', (done) => {
         const tasks = [];
         const tasksFinished = [];
         for (let i = 0; i < 10; i++) {
-          // setting tasksFinished to false to test that every task callback has been called
+            // setting tasksFinished to false to test that every task callback has been called
             tasksFinished.push(false);
 
             function httpGetRequest() {
@@ -373,6 +390,11 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
             onQueueDepleted: onQueueDepleted,
             onQueueFinished: onQueueFinished,
             onError: (err) => console.log(err.message),
+        });
+
+        // if does not throw an error, passes
+        music.billieHoliday.batchQueue({
+            tasks: tasks,
         });
     })
 });
