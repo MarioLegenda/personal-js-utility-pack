@@ -20,6 +20,7 @@ describe('testing all ladyGaga functions # ', () => {
         const objectInst = new Object();
         const func = new Function();
         const nan = NaN;
+        const gen = function*() {};
 
         expect(music.ladyGaga.is('boolean', boolTrue)).to.be.true;
         expect(music.ladyGaga.is('boolean', boolFalse)).to.be.true;
@@ -31,6 +32,7 @@ describe('testing all ladyGaga functions # ', () => {
         expect(music.ladyGaga.is('object', objectInst)).to.be.true;
         expect(music.ladyGaga.is('function', func)).to.be.true;
         expect(music.ladyGaga.is('nan', nan)).to.be.true;
+        expect(music.ladyGaga.is('generator', gen)).to.be.true;
     });
 
     it('should create a range of numbers', () => {
@@ -92,8 +94,73 @@ describe('testing all ladyGaga functions # ', () => {
         while(!(task = gen.next()).done) {
             expect(task.value).to.be.equal(index++);
         }
-    })
-})
+    });
+
+    it('should return the difference between objects', () => {
+        const obj1 = {
+            name: 'Billie',
+            lastName: 'Holiday',
+        };
+
+        const obj2 = {
+            name: 'Mile',
+            lastname: 'John',
+            lastName: 'mirko',
+        };
+
+        const obj3 = {
+            diff1: 'diff',
+            name: 'not diff'
+        };
+
+        const diff = music.ladyGaga.objectDiff(obj1, obj2, obj3);
+
+        expect(diff.length).to.be.equal(2);
+        expect(diff.includes('name')).to.be.true;
+        expect(diff.includes('lastName')).to.be.true;
+    });
+
+    it('should assert that empty() returns true if the data structure is empty', () => {
+        const emptyObject = {};
+        const emptyArray = [];
+
+        const nonEmptyObject = {prop: false};
+        const nonEmptyArray = ['value'];
+
+        const emptyGenerator = music.ladyGaga.loopGenerator([]);
+
+        function makeRangeIterator(start = 0, end = Infinity, step = 1) {
+            let nextIndex = start;
+            let iterationCount = 0;
+        
+            const rangeIterator = {
+               next: function() {
+                   let result;
+                   if (nextIndex < end) {
+                       result = { value: nextIndex, done: false }
+                       nextIndex += step;
+                       iterationCount++;
+                       return result;
+                   }
+                   return { value: iterationCount, done: true }
+               }
+            };
+            return rangeIterator;
+        };
+
+        const nonEmptyRangeIterator = makeRangeIterator(0, 1000);
+        const emptyRangeIterator = makeRangeIterator(0, 0);
+
+        expect(music.ladyGaga.empty(emptyObject)).to.be.true;
+        expect(music.ladyGaga.empty(emptyArray)).to.be.true;
+        expect(music.ladyGaga.empty(nonEmptyObject)).to.be.false;
+        expect(music.ladyGaga.empty(nonEmptyArray)).to.be.false;
+
+        expect(music.ladyGaga.empty(emptyGenerator)).to.be.true;
+        expect(music.ladyGaga.empty(nonEmptyRangeIterator)).to.be.false;
+        expect(music.ladyGaga.empty(emptyRangeIterator)).to.be.true;
+    });
+});
 
 
 it('should parse the url into domain parts', () => {
@@ -309,3 +376,65 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
         });
     })
 });
+
+describe('Test iheritance patterns | ', () => {
+    it('shoule create a prototype shared among all instances', () => {
+        const parent = {
+            sayHello: function() { return `Hello ${this.name}`},
+            someProp: false,
+        };
+
+        const children = [];
+        children.push({
+            name: 'Billie',
+        });
+        children.push({
+            name: 'Aretha',
+        });
+
+        let inhereted = music.rollingStones.sharedPrototype({
+            parent: parent,
+            children: children,
+        });
+
+        expect(inhereted[0].hasOwnProperty('name')).to.be.true;
+        expect(inhereted[1].hasOwnProperty('name')).to.be.true;
+
+        expect(Object.getPrototypeOf(inhereted[0]).hasOwnProperty('sayHello')).to.be.true;
+        expect(Object.getPrototypeOf(inhereted[1]).hasOwnProperty('sayHello')).to.be.true;
+
+        Object.getPrototypeOf(inhereted[0]).someProp = true;
+
+        expect(inhereted[0].someProp).to.be.true;
+        expect(inhereted[1].someProp).to.be.true;
+    });
+
+    it('should create a classical inheritance hierarchy', () => {
+        /**
+         * Example literary copied from https://davidshariff.com/blog/javascript-inheritance-patterns/
+         */
+        const Human = function() {}
+
+        Human.prototype = {
+            gender: '',
+        };
+
+        const Male = function (name) {
+            this.gender = 'Male';
+            this.name = name;
+        };
+
+        const Female = function (name) {
+            this.name = name;
+            this.gender = 'Female';
+        };
+
+        music.rollingStones.classical(Human, Male);
+
+        const male = new Male('Napoleon');
+        const female = new Female('Josephina');
+
+        expect(male.gender).to.be.equal('Male');
+        expect(female.gender).to.be.equal('Female');
+    });
+})
