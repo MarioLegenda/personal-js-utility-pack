@@ -11,6 +11,13 @@ function assertIterator(value) {
     return true;
 }
 
+/**
+ * Check if an array, iterator or an enumerable is empty or not. Supports arrays, objects, iterators and generators.
+ * 
+ * [value] : any
+ * 
+ * Returns true if the 'value' is empty, false otherwise.
+ */
 module.exports = function(value) {
     // is an iterator
     if(is('generator', value)) {

@@ -1,6 +1,9 @@
 const is = require('./is');
 const loopGenerator = require('./loopGenerator');
 
+/**
+ * Returns an array of properties that are different for every object
+ */
 module.exports = function(...rest) {
     const objectMap = {};
 

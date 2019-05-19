@@ -8,14 +8,14 @@ const objectDiff = require('../misc/objectDiff');
 const empty = require('../misc/empty');
 
 function Misc() {
-    this.inHttpStatusRange = inHttpRange;
-    this.is = is;
-    this.ucFirst = ucFirst;
-    this.range = range;
-    this.loopGenerator = loopGenerator;
-    this.parseHostname = parseHostname;
-    this.objectDiff = objectDiff;
-    this.empty = empty;
+    this.inHttpStatusRange = inHttpRange.bind(this);
+    this.is = is.bind(this);
+    this.ucFirst = ucFirst.bind(this);
+    this.range = range.bind(this);
+    this.loopGenerator = loopGenerator.bind(this);
+    this.parseHostname = parseHostname.bind(this);
+    this.objectDiff = objectDiff.bind(this);
+    this.empty = empty.bind(this);
 }
 
 module.exports = new Misc();

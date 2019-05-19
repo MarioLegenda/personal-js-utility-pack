@@ -1,7 +1,6 @@
 const is = require('../misc/is');
 const loopGenerator = require('../misc/loopGenerator');
 
-
 function spawn(metadata) {
     let {
       tasks, 
@@ -23,14 +22,15 @@ function spawn(metadata) {
             ++completed;
   
             if (onTaskDone) onTaskDone(...[rest, {completed: completed}]);
-            // if all operations are completed, no need to go further since while() loop
-            // was not executed because of index < tasks.length condition. Actually, no
-            // need for return but it is better to put it here for additional safety
+
+            // if all processes are completed, execute onQueueFinished(). This code
+            // executes when all tasks are sent and completed
             if (completed === tasks.length && onQueueFinished) return onQueueFinished();
         });
 
         if (onError) promise.catch(onError);
 
+        // spawned variable has the number of spawned (NOT completed) processes.
         ++spawned;
 
         // all tasks are spawned so we notifiy it. Mind you that there are still
@@ -65,6 +65,24 @@ function validate(metadata) {
     } else metadata.onError = null;
 }
 
+/**
+ * Spawns async promise objects as much as it is given. Only 'tasks' argument is required, everything else is optional.
+ * 
+ * onTaskDone() is called after every task is done. Receives all the promise arguments and a 'completed' prop with the 
+ * number of completed tasks so far.
+ * 
+ * onQueueDepleted() is called when all async tasks are initialized. This does not mean that they are completed. 
+ * 
+ * onQueueFinished() is called when all async tasks are finished
+ * 
+ * metadata: {
+ *    [tasks]: array : required
+ *    [onTaskDone] : function : optional
+ *    [onQueueDepleted]: function : optional
+ *    [onQueueFinished]: function : optional
+ *    [onError]: function : optional
+ * }
+ */
 module.exports = function (metadata) {
     validate(metadata);
 

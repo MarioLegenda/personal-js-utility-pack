@@ -17,9 +17,7 @@ function spawn(metadata) {
       const task = tasks[index];
 
       ++spawned;
-      // this function is recursive so index gets incremented only when the next
-      // batch of async operations is ready for processing. The processing is done
-      // inside the async function
+      
       ++index;
 
       const promise = task().then((...rest) => {
@@ -78,6 +76,27 @@ function validate(metadata) {
     } else metadata.onError = null;
 }
 
+/**
+ * Spawns async promise objects with a limit in a batch. Only 'tasks' argument is required, everything else is optional.
+ * For example, if given 20 processes to spawn, it will spawn 'limit' number of processes, wait until they complete and then
+ * spawn the next 'limit' number. When all processes are finished, it calls onQueueFinished. In every other regard, it is
+ * the same as batchQueue().
+ * 
+ * onTaskDone() is called after every task is done. Receives all the promise arguments and a 'completed' prop with the 
+ * number of completed tasks so far.
+ * 
+ * onQueueDepleted() is called when all async tasks are initialized. This does not mean that they are completed. 
+ * 
+ * onQueueFinished() is called when all async tasks are finished
+ * 
+ * metadata: {
+ *    [tasks]: array : required
+ *    [onTaskDone] : function : optional
+ *    [onQueueDepleted]: function : optional
+ *    [onQueueFinished]: function : optional
+ *    [onError]: function : optional
+ * }
+ */
 module.exports = function (metadata) {
     validate(metadata);
 

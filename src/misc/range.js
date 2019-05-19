@@ -1,5 +1,8 @@
 const is = require('./is');
 
+/**
+ * Creates a range from start to end. Can be used with negative numbers. 
+ */
 module.exports = function (start, end, step) {
   if (!is("number", start)) throw new Error("range() invalid argument. First argument must be a number");
   if (!is("number", end)) throw new Error("range() invalid argument. Second argument must be a number");

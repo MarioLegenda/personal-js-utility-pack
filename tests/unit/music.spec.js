@@ -36,6 +36,7 @@ describe('testing all ladyGaga functions # ', () => {
     });
 
     it('should create a range of numbers', () => {
+        // testing regular range from start to end
         let range = music.ladyGaga.range(1, 10);
 
         expect(range.length).to.be.equal(10);
@@ -44,6 +45,7 @@ describe('testing all ladyGaga functions # ', () => {
             expect(item).to.be.equal(index++);
         }
 
+        // testing regular range from start to end with a step
         range = music.ladyGaga.range(1, 10, 2);
 
         expect(range.length).to.be.equal(5);
@@ -55,6 +57,7 @@ describe('testing all ladyGaga functions # ', () => {
           index += 2;
         }
 
+        // testing regular range from start to end with a step beginning from 0
         range = music.ladyGaga.range(0, 10, 2);
 
         index = 2;
@@ -64,6 +67,7 @@ describe('testing all ladyGaga functions # ', () => {
             index += 2;
         }
 
+        // testing regular range with negative number as a start
         range = music.ladyGaga.range(-5, 10);
 
         index = -5;
@@ -71,6 +75,7 @@ describe('testing all ladyGaga functions # ', () => {
             expect(item).to.be.equal(index++);
         }
 
+        // testing regular range with negative number as a start with a step
         range = music.ladyGaga.range(-5, 10, 2);
 
         index = -4;
@@ -216,6 +221,7 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
         }
 
         const onComplete = () => {
+            // if all values in tasksFinished are true, this method is called correctly
             for (const finishedTask of tasksFinished) {
                 expect(finishedTask).to.be.true;
             }
@@ -225,6 +231,7 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
         
         const onError = () => {}
 
+        // check the binding of 'this'
         const isChainable = music.billieHoliday.sequenceQueue({
             tasks: tasks,
             onTaskDone, onTaskDone,
@@ -396,7 +403,7 @@ describe('test all billieHoliday function and billieHoliday helpers | ', functio
         music.billieHoliday.batchQueue({
             tasks: tasks,
         });
-    })
+    });
 });
 
 describe('Test iheritance patterns | ', () => {

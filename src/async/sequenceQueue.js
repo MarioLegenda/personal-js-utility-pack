@@ -22,6 +22,18 @@ function validate(tasks, onTaskDone, onComplete, onError) {
   }
 }
 
+/**
+ * Executes processes on after the other. After they all complete, it calls onComplete() function. Only 'tasks' argument
+ * is mandatory. This function is recursive so it can receive as much as tasks as your computer can handle it since recursion
+ * is executed on the stack memory
+ * 
+ * metadata: {
+ *    [tasks] : array : required
+ *    [onTaskDone] : function : optional
+ *    [onComplete] : function : optional
+ *    [onError] : function : optional
+ * }
+ */
 module.exports = function (metadata) {
   const {tasks, onTaskDone, onComplete, onError} = metadata;
 
@@ -29,8 +41,8 @@ module.exports = function (metadata) {
 
   if (tasks.length === 0) return this;
 
+  // all tasks are now in a generator. Every next() now yields a new promise
   const gen = loopGenerator(tasks);
-  // init the seekable generator
 
   function handler(promise) {
     promise.then((...rest) => {
@@ -41,9 +53,11 @@ module.exports = function (metadata) {
       if (!yielded.done) {
         const promise = yielded.value();
 
+        // when a task is done, the next one is called
         return handler(promise);
       }
 
+      // when all tasks are done, onComplete() is called
       if (yielded.done) {
         if (onComplete) return onComplete();
       }
